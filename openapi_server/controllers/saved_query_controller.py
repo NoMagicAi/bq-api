@@ -48,7 +48,7 @@ def get_saved_query_by_slug(saved_query_slug):  # noqa: E501
       return {"error": "Query not found"}, 404
 
     # return query
-    return SavedQuery.from_dict(query) # @FIXME params are omitted :(
+    return SavedQuery.from_dict(query) 
 
 def list_saved_queries():  # noqa: E501
     """Retrieves the list of all saved queries

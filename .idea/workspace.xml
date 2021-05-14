@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3fd3d982-df74-4491-a686-18f37ebcd44c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/bq-api-spec.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openapi_server/saved_queries.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/openapi_server/controllers/saved_query_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/openapi_server/controllers/saved_query_controller.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,7 +37,7 @@
       <option name="presentableId" value="Default" />
       <updated>1620987987849</updated>
       <workItem from="1620987989298" duration="857000" />
-      <workItem from="1620996593029" duration="7521000" />
+      <workItem from="1620996593029" duration="7731000" />
     </task>
     <servers />
   </component>
