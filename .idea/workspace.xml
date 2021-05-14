@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="3fd3d982-df74-4491-a686-18f37ebcd44c" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/bq-api-spec.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/openapi_server/saved_queries.json" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1sWUlF3f0GgZAvexhyhF5NLbbWz" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../bq_api_2" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3fd3d982-df74-4491-a686-18f37ebcd44c" name="Default Changelist" comment="" />
+      <created>1620987987849</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1620987987849</updated>
+      <workItem from="1620987989298" duration="857000" />
+      <workItem from="1620996593029" duration="7521000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="2" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="843" y="347" width="424" height="491" key="FileChooserDialogImpl" timestamp="1621005350162">
+      <screen x="72" y="27" width="1976" height="1125" />
+    </state>
+    <state x="843" y="347" width="424" height="491" key="FileChooserDialogImpl/72.27.1976.1125@72.27.1976.1125" timestamp="1621005350162" />
+    <state x="751" y="328" width="618" height="522" key="find.popup" timestamp="1621003729112">
+      <screen x="72" y="27" width="1976" height="1125" />
+    </state>
+    <state x="751" y="328" width="618" height="522" key="find.popup/72.27.1976.1125@72.27.1976.1125" timestamp="1621003729112" />
+  </component>
+</project>

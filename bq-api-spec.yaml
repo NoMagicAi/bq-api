@@ -1,0 +1,106 @@
+swagger: '2.0'
+info:
+  description: An API for an easy access to our BigQuery data
+  version: 1.0.0
+  title: NoMagic BigQuery API
+consumes:
+- application/json
+produces:
+- application/json
+tags:
+  - name: saved_query
+    description: Parametrized queries saved in our repo
+schemes:
+  - http
+paths:
+  /saved_queries:
+    get:
+      tags:
+        - saved_query
+      summary: Retrieves the list of all saved queries
+      description: Retrieves the list of all saved queries
+      operationId: listSavedQueries
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Successfully listed
+          schema:
+            $ref: '#/definitions/SavedQueriesResponse'
+
+  /saved_queries/{saved_query_slug}:
+    get:
+      tags:
+        - saved_query
+      summary: Retrieve a single saved query
+      description: Retrieve a single saved query
+      operationId: getSavedQueryBySlug
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: saved_query_slug
+          description: Slug of the saved query desired to be retrieved
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Succesful retrieval of a saved query
+          schema:
+            $ref: '#/definitions/SavedQuery'
+        '400':
+          description: Bad request
+        '404':
+          description: Query not found
+
+definitions:
+  SavedQuery:
+    title: Saved query
+    description: An SQL query saved in our repo
+    required:
+      - slug
+      - sql
+    properties:
+      slug:
+        type: string
+        description: Slug of a query (URL-friendly name)
+        example: my-awesome-slug
+      sql:
+        type: string
+        description: Query SQL code
+        example: SELECT 7;
+      params:
+        type: array
+        items:
+          $ref: '#/definitions/QueryParam'
+        description: If query is parametized, here is the list of params used
+  QueryParam:
+    type: object
+    description: A parameter used in a parametrized query
+    required:
+      - name
+      - type
+    properties:
+      name:
+        type: string
+        description: name used within a query, snake_case
+        example: evaluation_id
+      type:
+        type: string
+        description: type of param, it affects the way it is injected to SQL code
+        enum:
+          - str
+          - int
+  SavedQueriesResponse:
+    type: object
+    description: Response object contains all the saved queries
+    properties:
+      saved_queries:
+        type: array
+        items:
+          $ref: '#/definitions/SavedQuery'
+        description: List of saved query

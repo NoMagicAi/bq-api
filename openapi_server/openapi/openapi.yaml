@@ -1,0 +1,130 @@
+openapi: 3.0.1
+info:
+  description: An API for an easy access to our BigQuery data
+  title: NoMagic BigQuery API
+  version: 1.0.0
+servers:
+- url: /
+tags:
+- description: Parametrized queries saved in our repo
+  name: saved_query
+paths:
+  /saved_queries:
+    get:
+      description: Retrieves the list of all saved queries
+      operationId: list_saved_queries
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedQueriesResponse'
+          description: Successfully listed
+      summary: Retrieves the list of all saved queries
+      tags:
+      - saved_query
+      x-openapi-router-controller: openapi_server.controllers.saved_query_controller
+  /saved_queries/{saved_query_slug}:
+    get:
+      description: Retrieve a single saved query
+      operationId: get_saved_query_by_slug
+      parameters:
+      - description: Slug of the saved query desired to be retrieved
+        in: path
+        name: saved_query_slug
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedQuery'
+          description: Succesful retrieval of a saved query
+        "400":
+          content: {}
+          description: Bad request
+        "404":
+          content: {}
+          description: Query not found
+      summary: Retrieve a single saved query
+      tags:
+      - saved_query
+      x-openapi-router-controller: openapi_server.controllers.saved_query_controller
+components:
+  schemas:
+    SavedQuery:
+      description: An SQL query saved in our repo
+      example:
+        params:
+        - name: evaluation_id
+          type: str
+        - name: evaluation_id
+          type: str
+        slug: my-awesome-slug
+        sql: SELECT 7;
+      properties:
+        slug:
+          description: Slug of a query (URL-friendly name)
+          example: my-awesome-slug
+          type: string
+        sql:
+          description: Query SQL code
+          example: SELECT 7;
+          type: string
+        params:
+          description: If query is parametized, here is the list of params used
+          items:
+            $ref: '#/components/schemas/QueryParam'
+          type: array
+      required:
+      - slug
+      - sql
+      title: Saved query
+      type: object
+    QueryParam:
+      description: A parameter used in a parametrized query
+      example:
+        name: evaluation_id
+        type: str
+      properties:
+        name:
+          description: name used within a query, snake_case
+          example: evaluation_id
+          type: string
+        type:
+          description: type of param, it affects the way it is injected to SQL code
+          enum:
+          - str
+          - int
+          type: string
+      required:
+      - name
+      - type
+      type: object
+    SavedQueriesResponse:
+      description: Response object contains all the saved queries
+      example:
+        saved_queries:
+        - params:
+          - name: evaluation_id
+            type: str
+          - name: evaluation_id
+            type: str
+          slug: my-awesome-slug
+          sql: SELECT 7;
+        - params:
+          - name: evaluation_id
+            type: str
+          - name: evaluation_id
+            type: str
+          slug: my-awesome-slug
+          sql: SELECT 7;
+      properties:
+        saved_queries:
+          description: List of saved query
+          items:
+            $ref: '#/components/schemas/SavedQuery'
+          type: array
+      type: object
