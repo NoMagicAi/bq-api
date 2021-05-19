@@ -9,7 +9,77 @@ tags:
 - description: Parametrized queries saved in our repo
   name: saved_query
 paths:
-  /saved_queries:
+  /v1/data/{saved_query_slug}:
+    get:
+      description: Retrieve a single saved query result - it works only for not parametrized
+        queries
+      operationId: get_data
+      parameters:
+      - description: Slug of the saved query desired to be retrieved
+        in: path
+        name: saved_query_slug
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+          description: Succesful retrieval of a saved query result
+        "400":
+          content: {}
+          description: Bad request
+        "404":
+          content: {}
+          description: Query not found
+        "406":
+          content: {}
+          description: This query needs parameters to be provided - use POST
+      summary: Retrieve a single saved query result
+      tags:
+      - query_result
+      x-openapi-router-controller: openapi_server.controllers.query_result_controller
+    post:
+      description: Retrieve a single saved query result
+      operationId: get_data_with_params
+      parameters:
+      - description: Slug of a saved query to be executed
+        in: path
+        name: saved_query_slug
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataRequestBody'
+        description: values provided for mapametrized query
+        required: false
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+          description: Succesful retrieval of a saved query result
+        "400":
+          content: {}
+          description: Bad request
+        "404":
+          content: {}
+          description: Query not found
+        "406":
+          content: {}
+          description: This query needs parameters to be provided - use POST
+      summary: Retrieve a single saved query result
+      tags:
+      - query_result
+      x-codegen-request-body-name: body
+      x-openapi-router-controller: openapi_server.controllers.query_result_controller
+  /v1/saved_queries:
     get:
       description: Retrieves the list of all saved queries
       operationId: list_saved_queries
@@ -24,7 +94,7 @@ paths:
       tags:
       - saved_query
       x-openapi-router-controller: openapi_server.controllers.saved_query_controller
-  /saved_queries/{saved_query_slug}:
+  /v1/saved_queries/{saved_query_slug}:
     get:
       description: Retrieve a single saved query
       operationId: get_saved_query_by_slug
@@ -103,6 +173,39 @@ components:
       - name
       - type
       type: object
+    QueryValue:
+      description: A value used in a parametrized query, param will be replaced with
+        it
+      example:
+        name: evaluation_id
+        value: "7777"
+      properties:
+        name:
+          description: name used within a query, snake_case
+          example: evaluation_id
+          type: string
+        value:
+          description: value to be inserted
+          example: "7777"
+          type: string
+      required:
+      - name
+      - value
+      type: object
+    DataRequestBody:
+      description: data provided in request body when retiving data
+      example:
+        values:
+        - name: evaluation_id
+          value: "7777"
+        - name: evaluation_id
+          value: "7777"
+      properties:
+        values:
+          items:
+            $ref: '#/components/schemas/QueryValue'
+          type: array
+      type: object
     SavedQueriesResponse:
       description: Response object contains all the saved queries
       example:
@@ -127,4 +230,28 @@ components:
           items:
             $ref: '#/components/schemas/SavedQuery'
           type: array
+      type: object
+    QueryResult:
+      description: Query result (data retrieved)
+      example:
+        executed_sql: SELECT * FROM attempts WHERE evaluation_id=7000;
+        data:
+        - '{}'
+        - '{}'
+        error: 'Not Found: Dataset myproject:foo'
+      properties:
+        executed_sql:
+          description: SQL that was executed
+          example: SELECT * FROM attempts WHERE evaluation_id=7000;
+          type: string
+        error:
+          description: error message recieved from database
+          example: 'Not Found: Dataset myproject:foo'
+          type: string
+        data:
+          items:
+            type: object
+          type: array
+      required:
+      - executed_sql
       type: object

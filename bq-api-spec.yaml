@@ -13,7 +13,7 @@ tags:
 schemes:
   - http
 paths:
-  /saved_queries:
+  /v1/saved_queries:
     get:
       tags:
         - saved_query
@@ -30,7 +30,7 @@ paths:
           schema:
             $ref: '#/definitions/SavedQueriesResponse'
 
-  /saved_queries/{saved_query_slug}:
+  /v1/saved_queries/{saved_query_slug}:
     get:
       tags:
         - saved_query
@@ -56,6 +56,68 @@ paths:
           description: Bad request
         '404':
           description: Query not found
+
+  /v1/data/{saved_query_slug}:
+    get:
+      tags:
+        - query_result
+      summary: Retrieve a single saved query result
+      description: Retrieve a single saved query result - it works only for not parametrized queries
+      operationId: getData
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: saved_query_slug
+          description: Slug of the saved query desired to be retrieved
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Succesful retrieval of a saved query result
+          schema:
+            $ref: '#/definitions/QueryResult'
+        '400':
+          description: Bad request
+        '404':
+          description: Query not found
+        '406':
+          description: This query needs parameters to be provided - use POST
+    post:
+      tags:
+        - query_result
+      summary: Retrieve a single saved query result
+      description: Retrieve a single saved query result
+      operationId: getDataWithParams
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: saved_query_slug
+          description: Slug of a saved query to be executed
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: values provided for mapametrized query
+          required: false # if SQL dont contain any parameter placeholders, there is no need to provide values
+          schema:
+            $ref: '#/definitions/DataRequestBody'
+      responses:
+        '200':
+          description: Succesful retrieval of a saved query result
+          schema:
+            $ref: '#/definitions/QueryResult'
+        '400':
+          description: Bad request
+        '404':
+          description: Query not found
+        '406':
+          description: This query needs parameters to be provided - use POST
 
 definitions:
   SavedQuery:
@@ -95,6 +157,29 @@ definitions:
         enum:
           - str
           - int
+  QueryValue:
+    type: object
+    description: A value used in a parametrized query, param will be replaced with it
+    required:
+      - name
+      - value
+    properties:
+      name:
+        type: string
+        description: name used within a query, snake_case
+        example: evaluation_id
+      value:
+        type: string
+        description: value to be inserted
+        example: 7777
+  DataRequestBody:
+    type: object
+    description: data provided in request body when retiving data
+    properties:
+      values:
+        type: array
+        items:
+          $ref: '#/definitions/QueryValue'
   SavedQueriesResponse:
     type: object
     description: Response object contains all the saved queries
@@ -104,3 +189,20 @@ definitions:
         items:
           $ref: '#/definitions/SavedQuery'
         description: List of saved query
+  QueryResult:
+    type: object
+    description: Query result (data retrieved)
+    required:
+      - executed_sql
+    properties:
+      executed_sql:
+        type: string
+        description: SQL that was executed
+        example: "SELECT * FROM attempts WHERE evaluation_id=7000;"
+      error:
+        type: string
+        description: error message recieved from database
+        example: "Not Found: Dataset myproject:foo"
+      data:
+        type: array
+        items: {}
