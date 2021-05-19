@@ -19,7 +19,23 @@ def get_data(saved_query_slug):  # noqa: E501
 
     :rtype: QueryResult
     """
-    return 'do some magic GET!'
+
+    res = {}
+
+    try:
+      query = SavedQuery.from_dict(get_query_by_slug(SAVED_QUERIES, saved_query_slug))
+    except KeyError:
+      return {"error": "Query not found"}, 404
+
+    sql = query.sql
+
+    # if SQL query contains placeholder for values, replace them with provided values
+    if contains_params(sql):
+        return None, 406
+
+    res['executed_sql'] = sql
+    return QueryResult.from_dict(res)
+
 
 
 def get_data_with_params(saved_query_slug, body=None):  # noqa: E501
@@ -49,10 +65,8 @@ def get_data_with_params(saved_query_slug, body=None):  # noqa: E501
         body = DataRequestBody.from_dict(connexion.request.get_json())  # noqa: E501
         if not body.values:
             return None, 406
-        sql = QueryParser.parse(sql, body.values)
+        sql = QueryParser.parse(query, body.values)
 
     res['executed_sql'] = sql
     return QueryResult.from_dict(res)
-
-    return 'do some magic POST!'
 

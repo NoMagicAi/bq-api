@@ -1,5 +1,5 @@
 import re
-#@TODO total refactor
+#@TODO total refactor, YAML would be probably better for longer SQLs
 SAVED_QUERIES = {
   "saved_queries": [
     {

@@ -26,7 +26,8 @@ class TestQueryResultController(BaseTestCase):
             '/v1/data/{saved_query_slug}'.format(saved_query_slug='saved_query_slug_example'),
             method='GET',
             headers=headers)
-        self.assert200(response,
+        # @TODO test 200 and 406
+        self.assert404(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
     def test_get_data_with_params(self):
@@ -53,7 +54,7 @@ class TestQueryResultController(BaseTestCase):
             headers=headers,
             data=json.dumps(body),
             content_type='application/json')
-        # @TODO test 200
+        # @TODO test 200 and 406
         self.assert404(response,
                        'Response body is: \n' + response.data.decode('utf-8'))
 

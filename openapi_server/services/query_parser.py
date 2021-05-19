@@ -3,9 +3,12 @@ from typing import List
 from openapi_server.models.saved_query import SavedQuery  # noqa: E501
 from openapi_server.models.query_value import QueryValue  # noqa: E501
 
+
+QueryValues = List[QueryValue]
+
 class QueryParser:
     @staticmethod
-    def parse(query: SavedQuery, values: List[QueryValue] = []) -> str:
+    def parse(query: SavedQuery, values: QueryValues = []) -> str:
         """Returns a SQL query with all values inserted instead of placeholders"""
         sql = query.sql
         if not query.params:
