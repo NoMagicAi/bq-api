@@ -1,13 +1,9 @@
 import connexion
 import six
 
-from openapi_server.models.data_request_body import DataRequestBody  # noqa: E501
 from openapi_server.models.query_result import QueryResult  # noqa: E501
-from openapi_server.models.saved_query import SavedQuery  # noqa: E501
-from openapi_server import util
+from openapi_server.repositories.saved_query_repository import SAVED_QUERIES, get_query_by_slug, get_res
 
-from openapi_server.repositories.saved_query_repository import SAVED_QUERIES, get_query_by_slug, contains_params
-from openapi_server.services.query_parser import QueryParser
 
 def get_data(saved_query_slug):  # noqa: E501
     """Retrieve a single saved query result
@@ -19,25 +15,26 @@ def get_data(saved_query_slug):  # noqa: E501
 
     :rtype: QueryResult
     """
-
-    res = {}
-
     try:
-      query = SavedQuery.from_dict(get_query_by_slug(SAVED_QUERIES, saved_query_slug))
+        query = get_query_by_slug(SAVED_QUERIES, saved_query_slug)
     except KeyError:
-      return {"error": "Query not found"}, 404
-
-    sql = query.sql
+        return {"error": "Query not found"}, 404
 
     # if SQL query contains placeholder for values, replace them with provided values
-    if contains_params(sql):
-        return None, 406
+    # for GET - it will throw 406 if any values needed (SQL contains placeholders)
+    # in such case you should use POST
+    request_json = connexion.request.get_json() if connexion.request.is_json else None
+    try:
+        res = get_res(request_json, query)
+    except ValueError as e:
+        return {"error": "Values for parametrized query not provided", "payload": e.args}, 406
 
-    res['executed_sql'] = sql
-    return QueryResult.from_dict(res)
+    # data from DB wasn't correctly processed here, maybe contract is somehow wrong
+    # return QueryResult.from_dict(res)
+    return res
 
-
-
+# @TODO body should be used?
+# @TODO maybe there should be one method for both POST and GET here, code is the same
 def get_data_with_params(saved_query_slug, body=None):  # noqa: E501
     """Retrieve a single saved query result
 
@@ -50,23 +47,18 @@ def get_data_with_params(saved_query_slug, body=None):  # noqa: E501
 
     :rtype: QueryResult
     """
-
-    res = {}
-
     try:
-      query = SavedQuery.from_dict(get_query_by_slug(SAVED_QUERIES, saved_query_slug))
+        query = get_query_by_slug(SAVED_QUERIES, saved_query_slug)
     except KeyError:
-      return {"error": "Query not found"}, 404
-
-    sql = query.sql
+        return {"error": "Query not found"}, 404
 
     # if SQL query contains placeholder for values, replace them with provided values
-    if connexion.request.is_json and contains_params(sql):
-        body = DataRequestBody.from_dict(connexion.request.get_json())  # noqa: E501
-        if not body.values:
-            return None, 406
-        sql = QueryParser.parse(query, body.values)
+    request_json = connexion.request.get_json() if connexion.request.is_json else None
+    try:
+        res = get_res(request_json, query)
+    except ValueError:
+        return {"error": "Values for parametrized query not provided"}, 406
 
-    res['executed_sql'] = sql
-    return QueryResult.from_dict(res)
-
+    # data from DB wasn't correctly processed here, maybe contract is somehow wrong
+    # return QueryResult.from_dict(res)
+    return res
