@@ -1,12 +1,16 @@
 import re
-import json
-from google.cloud import bigquery
 
 from openapi_server.models.saved_query import SavedQuery  # noqa: E501
 from openapi_server.models.data_request_body import DataRequestBody  # noqa: E501
 from openapi_server.services.query_parser import QueryParser
+from openapi_server.adapters.bigquery_adapter import BigqueryAdapter
 
 #@TODO total refactor, YAML would be probably better for longer SQLs
+#@TODO probably I will remove project and dataset, so only staging:api would be available
+
+# please DON'T specify a project, API connects to STAGING project ("staging-nomagic-ai")
+# if you need e.g. data from PROD you can access it via VIEW in staging-nomagic-ai:api dataset
+# @TODO easy to test in BQ console
 SAVED_QUERIES = {
   "saved_queries": [
     {
@@ -27,11 +31,6 @@ SAVED_QUERIES = {
 }
 
 PARAM_PLACEHOLDER = r"{% \S+ %}"
-
-DEFAULT_BQ_PROJECT = "staging-nomagic-ai"
-LOCATION = "EU"
-CLIENT = bigquery.Client(project=DEFAULT_BQ_PROJECT)
-
 
 def get_query_by_slug(query_list, slug: str) -> SavedQuery:
   for record in query_list["saved_queries"]:
@@ -56,12 +55,8 @@ def get_res(request_json, query: SavedQuery) -> QueryParser:
     values = body.values
 
   res['executed_sql'] = QueryParser.parse(query, values)
-  res['data'] = get_bigquery_result(res['executed_sql'])
+  res['data'] = BigqueryAdapter.get_result_as_dict(res['executed_sql'])
 
   return res
 
 
-# it should be in a separate adapter, but so far it's just a PoT
-def get_bigquery_result(sql):
-    df = CLIENT.query(sql, location=LOCATION).result().to_dataframe()
-    return df.to_dict()
