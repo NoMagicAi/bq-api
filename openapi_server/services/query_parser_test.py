@@ -69,3 +69,4 @@ def test_query_parser_happy_path(saved_query_fixture, value_fixture):
 # def test_query_parser_happy_path_2_params(saved_query_fixture, value_fixture):
 #     sql = QueryParser.parse(query=saved_query_fixture, values=[value_fixture])
 #     assert sql == "SELECT 7 AS test FROM attampts WHERE evaluation_id=7000;"
+# unhappy path for 2 parrmas - one value missed
