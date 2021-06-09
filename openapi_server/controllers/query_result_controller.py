@@ -56,8 +56,8 @@ def get_data_with_params(saved_query_slug, body=None):  # noqa: E501
     request_json = connexion.request.get_json() if connexion.request.is_json else None
     try:
         res = get_res(request_json, query)
-    except ValueError:
-        return {"error": "Values for parametrized query not provided"}, 406
+    except ValueError as e:
+        return {"error": "Failed to replace params with values. " + str(e)}, 406
 
     # data from DB wasn't correctly processed here, maybe contract is somehow wrong
     # return QueryResult.from_dict(res)

@@ -26,6 +26,21 @@ SAVED_QUERIES = {
             "type": "int"
           }
         ]
+    },
+    {
+      "slug": "placing-failures-competec",
+      # experiment with a poor mans pagination [julia]
+      "sql": "SELECT * FROM `staging-nomagic-ai.api.placing_failures_competec` LIMIT {% LIMIT %} OFFSET {% OFFSET %}",
+      "params": [
+          {
+            "name": "LIMIT",
+            "type": "int"
+          },
+          {
+            "name": "OFFSET",
+            "type": "int"
+          }
+        ]
     }
   ]
 }
@@ -51,7 +66,7 @@ def get_res(request_json, query: SavedQuery) -> QueryParser:
   if request_json and _contains_params(sql):
     body = DataRequestBody.from_dict(request_json)  # noqa: E501
     if not body.values:
-      raise ValueError("Values for parametrized query not provided", res)
+      raise ValueError("Values for parametrized query not provided. `values` field missed in request body.", res)
     values = body.values
 
   res['executed_sql'] = QueryParser.parse(query, values)

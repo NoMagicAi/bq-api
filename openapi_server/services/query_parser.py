@@ -2,6 +2,7 @@ import re
 from typing import List
 from openapi_server.models.saved_query import SavedQuery  # noqa: E501
 from openapi_server.models.query_value import QueryValue  # noqa: E501
+from openapi_server.models.query_params import QueryParams  # noqa: E501
 
 
 QueryValues = List[QueryValue]
@@ -15,14 +16,25 @@ class QueryParser:
             return sql
         for param in query.params:
             if not values:
-                raise ValueError("For each param value must be provided.")
+                raise ValueError("For each param value must be provided. No values given.")
+            mismatched = QueryParser._mismatched(query.params, values)
+            if mismatched:
+                raise ValueError(
+                    f"For each param value must be provided. Mismatched params: {mismatched}. Expected params list: {query.params}. Values provided: {values}")
             for value in values:
                 if value.name == param.name:
                     sql = QueryParser._replace(sql=sql, param_type=param.type, name=value.name, value=value.value)
-                    break
-                raise ValueError("For each param value must be provided.")
-
         return sql
+
+    @staticmethod
+    def _mismatched(query_params: QueryParams = [], values: QueryValues = []) -> QueryParams:
+        def Diff(li1, li2):
+            return list(set(li1) - set(li2)) + list(set(li2) - set(li1))
+
+        required = [o.name for o in query_params]
+        given = [o.name for o in values]
+        return Diff(required, given)
+
 
     @staticmethod
     def _replace(sql: str, param_type: str, name: str, value: str) -> str:
