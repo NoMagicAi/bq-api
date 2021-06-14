@@ -29,7 +29,8 @@ def get_data(saved_query_slug):  # noqa: E501
     except ValueError as e:
         return {"error": "Values for parametrized query not provided", "payload": e.args}, 406
 
-    # data from DB wasn't correctly processed here, maybe contract is somehow wrong
+    # conversion to QueryResult commented out
+    # because data from DB wasn't correctly processed here, maybe auto-generated contract is somehow wrong
     # return QueryResult.from_dict(res)
     return res
 
