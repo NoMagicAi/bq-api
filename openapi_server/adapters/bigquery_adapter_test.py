@@ -30,8 +30,3 @@ import pytest
 #     mock_client().create_table.assert_called_with(mock_table.return_value)
 
 # https://pypi.org/project/bq-test-kit/
-
-
-def test_to_dict():
-    pass
-
