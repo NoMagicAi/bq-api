@@ -28,13 +28,10 @@ class QueryParser:
 
     @staticmethod
     def _mismatched(query_params: QueryParams = [], values: QueryValues = []) -> QueryParams:
-        def Diff(li1, li2):
-            return list(set(li1) - set(li2)) + list(set(li2) - set(li1))
+        required = {o.name for o in query_params}
+        given = {o.name for o in values}
 
-        required = [o.name for o in query_params]
-        given = [o.name for o in values]
-        return Diff(required, given)
-
+        return required.difference(given)
 
     @staticmethod
     def _replace(sql: str, param_type: str, name: str, value: str) -> str:

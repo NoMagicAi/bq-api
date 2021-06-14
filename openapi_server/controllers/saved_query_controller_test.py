@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import
 import unittest
+import pytest
 
 from flask import json
 from six import BytesIO
@@ -10,7 +11,7 @@ from openapi_server.models.data_request_body import DataRequestBody  # noqa: E50
 from openapi_server.models.query_result import QueryResult  # noqa: E501
 from openapi_server.test import BaseTestCase
 
-
+@pytest.mark.skip(reason="dont want to run integration tests now")
 class TestQueryResultController(BaseTestCase):
     """QueryResultController integration test stubs"""
 
