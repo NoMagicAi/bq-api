@@ -41,6 +41,16 @@ SAVED_QUERIES = {
             "type": "int"
           }
         ]
+    },
+    {
+      "slug": "kpis-in-lab",
+      "sql": "SELECT * FROM `staging-nomagic-ai.api.kpis_in_lab` WHERE evaluation_id =  {% EVALUATION_ID %}",
+      "params": [
+          {
+            "name": "EVALUATION_ID",
+            "type": "int"
+          }
+        ]
     }
   ]
 }
